@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="CONTROL PRO: asistente personal de productividad profesional.">
+  <title>CONTROL PRO</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">CP</div>
+        <div><strong>CONTROL PRO</strong><small>PRODUCTIVIDAD PERSONAL</small></div>
+      </div>
+      <div class="profile-switch">
+        <label for="profileSelect">PERFIL ACTIVO</label>
+        <select id="profileSelect" aria-label="Perfil activo"></select>
+        <button class="text-button" id="manageProfiles">Administrar perfiles <span>↗</span></button>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard"><span>▦</span> Mi día</button>
+        <button class="nav-item" data-view="tasks"><span>✓</span> Tareas</button>
+        <button class="nav-item" data-view="responsibilities"><span>◎</span> Responsabilidades</button>
+        <button class="nav-item" data-view="projects"><span>▤</span> Proyectos</button>
+        <button class="nav-item" data-view="journal"><span>≡</span> Bitácora</button>
+        <button class="nav-item" data-view="settings"><span>⚙</span> Ajustes y respaldos</button>
+      </nav>
+      <div class="sidebar-footer"><span class="status-dot"></span> Datos guardados en este dispositivo</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-button menu-button" id="menuToggle" aria-label="Abrir menú">☰</button>
+        <div><div class="eyebrow" id="dateLabel"></div><div class="top-title" id="viewTitle">Mi día</div></div>
+        <div class="top-actions">
+          <button class="icon-button" id="quickAdd" title="Nueva tarea">＋</button>
+          <div class="avatar">J</div>
+        </div>
+      </header>
+
+      <section class="view active" id="view-dashboard">
+        <div class="welcome-row">
+          <div><div class="eyebrow">PANEL PERSONAL</div><h1>Vamos a avanzar.</h1><p class="muted">Organiza tus prioridades y mantén el control de tu jornada.</p></div>
+          <button class="primary-button" id="dashboardAdd">＋ Nueva tarea</button>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card"><span class="stat-label">Pendientes</span><strong id="statPending">0</strong><small>Por atender</small></article>
+          <article class="stat-card"><span class="stat-label">Vencen hoy</span><strong id="statToday">0</strong><small>Requieren atención</small></article>
+          <article class="stat-card"><span class="stat-label">Completadas</span><strong id="statDone">0</strong><small>En total</small></article>
+          <article class="stat-card accent-card"><span class="stat-label">Avance del día</span><strong id="statProgress">0%</strong><div class="progress-track"><i id="progressBar"></i></div></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel">
+            <div class="panel-heading"><div><h2>Prioridades de hoy</h2><p class="muted">Lo que merece tu atención primero.</p></div><button class="text-button" data-goto="tasks">Ver todas →</button></div>
+            <div id="todayTasks" class="task-list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><h2>Enfoque del puesto</h2><p class="muted">Responsabilidades del perfil activo.</p></div></div>
+            <div id="profileSummary" class="responsibility-summary"></div>
+          </article>
+        </div>
+        <article class="panel activity-panel">
+          <div class="panel-heading"><div><h2>Actividad reciente</h2><p class="muted">Tus últimos movimientos en CONTROL PRO.</p></div></div>
+          <div id="recentActivity" class="activity-list"></div>
+        </article>
+      </section>
+
+      <section class="view" id="view-tasks">
+        <div class="section-heading"><div><div class="eyebrow">EJECUCIÓN</div><h1>Mis tareas</h1><p class="muted">Captura, prioriza y da seguimiento a tus pendientes.</p></div><button class="primary-button" id="taskAdd">＋ Nueva tarea</button></div>
+        <div class="toolbar">
+          <input id="taskSearch" type="search" placeholder="Buscar tareas...">
+          <select id="taskFilter"><option value="all">Todas</option><option value="open">Pendientes</option><option value="done">Completadas</option><option value="overdue">Vencidas</option></select>
+          <select id="taskPriorityFilter"><option value="all">Todas las prioridades</option><option value="high">Alta</option><option value="medium">Media</option><option value="low">Baja</option></select>
+        </div>
+        <div class="panel"><div id="allTasks" class="task-list"></div></div>
+      </section>
+
+      <section class="view" id="view-responsibilities">
+        <div class="section-heading"><div><div class="eyebrow">TU PUESTO, TUS FUNCIONES</div><h1>Responsabilidades</h1><p class="muted">Configura las áreas que forman parte de tu trabajo.</p></div><button class="primary-button" id="addResponsibility">＋ Agregar</button></div>
+        <div class="info-banner">Las responsabilidades pertenecen al perfil activo. Puedes cambiar de puesto o personalizar cada perfil sin perder el historial.</div>
+        <div id="responsibilityList" class="card-grid"></div>
+      </section>
+
+      <section class="view" id="view-projects">
+        <div class="section-heading"><div><div class="eyebrow">OBJETIVOS Y RESULTADOS</div><h1>Proyectos</h1><p class="muted">Mantén visibles tus iniciativas y objetivos.</p></div><button class="primary-button" id="addProject">＋ Nuevo proyecto</button></div>
+        <div id="projectList" class="card-grid"></div>
+      </section>
+
+      <section class="view" id="view-journal">
+        <div class="section-heading"><div><div class="eyebrow">MEMORIA PROFESIONAL</div><h1>Bitácora</h1><p class="muted">Registra decisiones, avances, incidencias y aprendizajes.</p></div><button class="primary-button" id="addJournal">＋ Nueva entrada</button></div>
+        <div id="journalList" class="journal-list"></div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="section-heading"><div><div class="eyebrow">CONFIGURACIÓN</div><h1>Ajustes y respaldos</h1><p class="muted">Tus datos son tuyos y permanecen en este dispositivo.</p></div></div>
+        <div class="settings-grid">
+          <article class="panel"><h2>Perfiles de puesto</h2><p class="muted">Crea perfiles, cambia de puesto y personaliza responsabilidades.</p><button class="secondary-button" id="settingsProfiles">Administrar perfiles</button></article>
+          <article class="panel"><h2>Respaldo de información</h2><p class="muted">Exporta tus datos a un archivo JSON para guardarlos en un lugar seguro.</p><div class="button-row"><button class="primary-button" id="exportData">Exportar respaldo</button><button class="secondary-button" id="importData">Importar respaldo</button><input type="file" id="importFile" accept="application/json" hidden></div></article>
+          <article class="panel"><h2>Privacidad</h2><p class="muted">CONTROL PRO funciona localmente. No tiene cuentas, servidores ni envío automático de información.</p><div class="privacy-note"><span class="status-dot"></span> Almacenamiento local activado</div></article>
+          <article class="panel"><h2>Aplicación</h2><p class="muted">Versión inicial 0.1.0 · PWA preparada para instalación cuando esté alojada mediante HTTPS.</p><button class="secondary-button" id="installApp" disabled>Instalar aplicación</button><small class="muted" id="installHint">La instalación estará disponible al publicar la app en un sitio seguro.</small></article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="taskDialog" class="modal">
+    <form method="dialog" id="taskForm">
+      <div class="modal-head"><div><div class="eyebrow">ORGANIZACIÓN</div><h2 id="taskDialogTitle">Nueva tarea</h2></div><button class="icon-button close-dialog" aria-label="Cerrar">×</button></div>
+      <input type="hidden" id="taskId">
+      <label>Nombre de la tarea<input id="taskName" required maxlength="100" placeholder="Ej. Revisar pendientes de operación"></label>
+      <div class="form-row"><label>Prioridad<select id="taskPriority"><option value="high">Alta</option><option value="medium" selected>Media</option><option value="low">Baja</option></select></label><label>Fecha límite<input id="taskDue" type="date"></label></div>
+      <label>Área / responsabilidad<select id="taskArea"></select></label>
+      <label>Notas<textarea id="taskNotes" rows="3" placeholder="Detalles o resultado esperado..."></textarea></label>
+      <label class="check-label"><input id="taskRecurring" type="checkbox"> Repetir diariamente al completar</label>
+      <div class="modal-actions"><button type="button" class="secondary-button close-dialog">Cancelar</button><button type="submit" class="primary-button">Guardar tarea</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="simpleDialog" class="modal">
+    <form method="dialog" id="simpleForm">
+      <div class="modal-head"><div><div class="eyebrow" id="simpleEyebrow">CONFIGURACIÓN</div><h2 id="simpleTitle">Agregar</h2></div><button class="icon-button close-dialog" aria-label="Cerrar">×</button></div>
+      <div id="simpleFields"></div>
+      <div class="modal-actions"><button type="button" class="secondary-button close-dialog">Cancelar</button><button type="submit" class="primary-button">Guardar</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
