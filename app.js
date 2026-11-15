@@ -38,6 +38,7 @@ function priorityLabel(p){return p==="high"?"Alta":p==="medium"?"Media":"Baja"}
 function taskMarkup(t){return `<div class="task-row ${t.done?"completed":""}"><input class="task-check" type="checkbox" data-check="${t.id}" ${t.done?"checked":""} ${(t.done||(t.due&&t.due>today()))?"disabled":""} aria-label="Completar tarea"><div class="task-main"><div class="task-name">${escapeHTML(t.name)}</div><div class="task-meta">${escapeHTML(t.area||"General")} · ${t.due?fmtDate(t.due):"Sin fecha"}${t.due&&t.due<today()&&!t.done?" · VENCIDA":""}</div></div><span class="priority ${t.priority}">${priorityLabel(t.priority)}</span><div class="task-actions"><button class="mini-button" data-edit-task="${t.id}" title="Editar">✎</button><button class="mini-button" data-delete-task="${t.id}" title="Eliminar">×</button></div></div>`}
 function renderDashboard(){
  const tasks=activeTasks();
+ const open=tasks.filter(t=>!t.done);
  const todayDone=tasks.filter(t=>t.done&&t.doneAt&&dateKey(new Date(t.doneAt))===today()).length;
  const todayScope=tasks.filter(t=>t.due===today()||(t.done&&t.doneAt&&dateKey(new Date(t.doneAt))===today()));
  const totalToday=todayScope.length;
