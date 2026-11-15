@@ -37,10 +37,17 @@ function activeTasks(){return state.tasks.filter(t=>t.profileId===state.activePr
 function priorityLabel(p){return p==="high"?"Alta":p==="medium"?"Media":"Baja"}
 function taskMarkup(t){return `<div class="task-row ${t.done?"completed":""}"><input class="task-check" type="checkbox" data-check="${t.id}" ${t.done?"checked":""} ${(t.done||(t.due&&t.due>today()))?"disabled":""} aria-label="Completar tarea"><div class="task-main"><div class="task-name">${escapeHTML(t.name)}</div><div class="task-meta">${escapeHTML(t.area||"General")} · ${t.due?fmtDate(t.due):"Sin fecha"}${t.due&&t.due<today()&&!t.done?" · VENCIDA":""}</div></div><span class="priority ${t.priority}">${priorityLabel(t.priority)}</span><div class="task-actions"><button class="mini-button" data-edit-task="${t.id}" title="Editar">✎</button><button class="mini-button" data-delete-task="${t.id}" title="Eliminar">×</button></div></div>`}
 function renderDashboard(){
- const tasks=activeTasks(),open=tasks.filter(t=>!t.done),due=open.filter(t=>t.due===today()),todayDone=tasks.filter(t=>t.done&&t.doneAt&&dateKey(new Date(t.doneAt))===today()).length;
+ const tasks=activeTasks();
+ const todayDone=tasks.filter(t=>t.done&&t.doneAt&&dateKey(new Date(t.doneAt))===today()).length;
  const todayScope=tasks.filter(t=>t.due===today()||(t.done&&t.doneAt&&dateKey(new Date(t.doneAt))===today()));
- $("statPending").textContent=open.length;$("statToday").textContent=due.length;$("statDone").textContent=todayDone;
- const pct=todayScope.length?Math.round(todayDone/todayScope.length*100):0;$("statProgress").textContent=pct+"%";$("progressBar").style.width=pct+"%";
+ const totalToday=todayScope.length;
+ const pct=totalToday?Math.min(100,Math.round(todayDone/totalToday*100)):0;
+ $("statDone").textContent=todayDone+" de "+totalToday;
+ $("dailyProgressHint").textContent=totalToday?(todayDone===totalToday?"¡Completaste todas tus tareas de hoy!":"Vas "+pct+"% de tu jornada"):"Agrega tus tareas del día para comenzar";
+ $("progressBar").style.width=pct+"%";
+ const quotes=["La constancia convierte los pequeños avances en grandes resultados.","No necesitas hacerlo todo hoy; necesitas avanzar en lo importante.","La disciplina es cumplir contigo incluso en los días difíciles.","Cada tarea terminada es una decisión a favor de tus objetivos.","El progreso se construye con acciones pequeñas, repetidas con intención.","Enfócate en lo que puedes resolver hoy. Lo demás puede esperar.","Un buen día no es perfecto: es un día en el que avanzaste.","La organización libera espacio para pensar mejor.","Hazlo con calma, pero hazlo con propósito.","Tu siguiente paso vale más que esperar el momento perfecto.","La excelencia está en cuidar los detalles, incluso cuando nadie mira.","La confianza se construye cumpliendo los compromisos que haces contigo.","No midas el día por lo ocupado que estuviste, sino por lo que lograste.","La mejora continua empieza con una decisión pequeña.","Hoy tienes una nueva oportunidad para hacerlo mejor."];
+ const dayNumber=Math.floor(new Date(today()+"T12:00:00").getTime()/86400000);
+ $("dailyQuote").textContent="“"+quotes[((dayNumber%quotes.length)+quotes.length)%quotes.length]+"”";
  const ordered=[...open].sort((a,b)=>({high:0,medium:1,low:2}[a.priority]-{high:0,medium:1,low:2}[b.priority])||(a.due||"9999").localeCompare(b.due||"9999"));
  $("todayTasks").innerHTML=ordered.slice(0,5).map(taskMarkup).join("")||`<div class="empty-state">No tienes tareas pendientes. ¡Buen trabajo!</div>`;
  const resp=profile()?.responsibilities||[];$("profileSummary").innerHTML=resp.slice(0,6).map(r=>`<div class="summary-item"><span>${escapeHTML(r.name)}</span><span>${escapeHTML(r.area||"General")}</span></div>`).join("")||`<div class="empty-state">Agrega responsabilidades a tu perfil.</div>`;
