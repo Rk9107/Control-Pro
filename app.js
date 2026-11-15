@@ -39,8 +39,11 @@ function taskMarkup(t){return `<div class="task-row ${t.done?"completed":""}"><i
 function renderDashboard(){
  const tasks=activeTasks();
  const open=tasks.filter(t=>!t.done);
- const todayDone=tasks.filter(t=>t.done&&t.doneAt&&dateKey(new Date(t.doneAt))===today()).length;
- const todayScope=tasks.filter(t=>t.due===today()||(t.done&&t.doneAt&&dateKey(new Date(t.doneAt))===today()));
+ const todayKey=today();
+ const taskSeries=t=>t.recurrenceId||t.id;
+ const completedToday=[...new Set(tasks.filter(t=>t.done&&t.doneAt&&dateKey(new Date(t.doneAt))===todayKey).map(taskSeries))];
+ const todayScope=[...new Map(tasks.filter(t=>t.due===todayKey||(t.done&&t.doneAt&&dateKey(new Date(t.doneAt))===todayKey)).map(t=>[taskSeries(t),t])).values()];
+ const todayDone=completedToday.length;
  const totalToday=todayScope.length;
  const pct=totalToday?Math.min(100,Math.round(todayDone/totalToday*100)):0;
  $("statDone").textContent=todayDone+" de "+totalToday;
