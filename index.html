@@ -48,11 +48,9 @@
           <div><div class="eyebrow">PANEL PERSONAL</div><h1>Vamos a avanzar.</h1><p class="muted">Organiza tus prioridades y mantén el control de tu jornada.</p></div>
           <button class="primary-button" id="dashboardAdd">＋ Nueva tarea</button>
         </div>
-        <div class="stats-grid">
-          <article class="stat-card"><span class="stat-label">Pendientes</span><strong id="statPending">0</strong><small>Por atender</small></article>
-          <article class="stat-card"><span class="stat-label">Vencen hoy</span><strong id="statToday">0</strong><small>Requieren atención</small></article>
-          <article class="stat-card"><span class="stat-label">Completadas</span><strong id="statDone">0</strong><small>En total</small></article>
-          <article class="stat-card accent-card"><span class="stat-label">Avance del día</span><strong id="statProgress">0%</strong><div class="progress-track"><i id="progressBar"></i></div></article>
+        <div class="stats-grid daily-focus-grid">
+          <article class="stat-card accent-card daily-progress-card"><span class="stat-label">Tareas completadas hoy</span><strong id="statDone">0 de 0</strong><small id="dailyProgressHint">Tu avance de esta jornada</small><div class="progress-track"><i id="progressBar"></i></div></article>
+          <article class="stat-card daily-quote-card"><span class="stat-label">Un pensamiento para hoy</span><p id="dailyQuote">La constancia convierte los pequeños avances en grandes resultados.</p><small id="dailyQuoteAuthor">CONTROL PRO · Inspiración diaria</small></article>
         </div>
         <div class="content-grid">
           <article class="panel">
@@ -129,6 +127,6 @@
     </form>
   </dialog>
   <div class="toast" id="toast" role="status"></div>
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>
