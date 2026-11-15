@@ -37,9 +37,10 @@ function activeTasks(){return state.tasks.filter(t=>t.profileId===state.activePr
 function priorityLabel(p){return p==="high"?"Alta":p==="medium"?"Media":"Baja"}
 function taskMarkup(t){return `<div class="task-row ${t.done?"completed":""}"><input class="task-check" type="checkbox" data-check="${t.id}" ${t.done?"checked":""} ${(t.done||(t.due&&t.due>today()))?"disabled":""} aria-label="Completar tarea"><div class="task-main"><div class="task-name">${escapeHTML(t.name)}</div><div class="task-meta">${escapeHTML(t.area||"General")} · ${t.due?fmtDate(t.due):"Sin fecha"}${t.due&&t.due<today()&&!t.done?" · VENCIDA":""}</div></div><span class="priority ${t.priority}">${priorityLabel(t.priority)}</span><div class="task-actions"><button class="mini-button" data-edit-task="${t.id}" title="Editar">✎</button><button class="mini-button" data-delete-task="${t.id}" title="Eliminar">×</button></div></div>`}
 function renderDashboard(){
- const tasks=activeTasks(),open=tasks.filter(t=>!t.done),done=tasks.filter(t=>t.done),due=open.filter(t=>t.due===today()),todayDone=tasks.filter(t=>t.doneAt&&t.doneAt.slice(0,10)===today()).length;
- $("statPending").textContent=open.length;$("statToday").textContent=due.length;$("statDone").textContent=done.length;
- const pct=tasks.length?Math.round(done.length/tasks.length*100):0;$("statProgress").textContent=pct+"%";$("progressBar").style.width=pct+"%";
+ const tasks=activeTasks(),open=tasks.filter(t=>!t.done),due=open.filter(t=>t.due===today()),todayDone=tasks.filter(t=>t.done&&t.doneAt&&dateKey(new Date(t.doneAt))===today()).length;
+ const todayScope=tasks.filter(t=>t.due===today()||(t.done&&t.doneAt&&dateKey(new Date(t.doneAt))===today()));
+ $("statPending").textContent=open.length;$("statToday").textContent=due.length;$("statDone").textContent=todayDone;
+ const pct=todayScope.length?Math.round(todayDone/todayScope.length*100):0;$("statProgress").textContent=pct+"%";$("progressBar").style.width=pct+"%";
  const ordered=[...open].sort((a,b)=>({high:0,medium:1,low:2}[a.priority]-{high:0,medium:1,low:2}[b.priority])||(a.due||"9999").localeCompare(b.due||"9999"));
  $("todayTasks").innerHTML=ordered.slice(0,5).map(taskMarkup).join("")||`<div class="empty-state">No tienes tareas pendientes. ¡Buen trabajo!</div>`;
  const resp=profile()?.responsibilities||[];$("profileSummary").innerHTML=resp.slice(0,6).map(r=>`<div class="summary-item"><span>${escapeHTML(r.name)}</span><span>${escapeHTML(r.area||"General")}</span></div>`).join("")||`<div class="empty-state">Agrega responsabilidades a tu perfil.</div>`;
